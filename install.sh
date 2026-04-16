@@ -72,26 +72,25 @@ read -r -s DB_URL_INPUT
 echo ""
 
 if [ -n "$DB_URL_INPUT" ]; then
-  # 쉘 프로파일 결정
-  if [ -f "$HOME/.zshrc" ]; then
-    PROFILE="$HOME/.zshrc"
-  else
-    PROFILE="$HOME/.bash_profile"
-  fi
+  python3 - "$SETTINGS" "$DB_URL_INPUT" <<'PYEOF'
+import sys, json
 
-  # 이미 있으면 교체, 없으면 추가
-  if grep -q "OPENKNOWL_DB_URL" "$PROFILE" 2>/dev/null; then
-    sed -i '' "s|export OPENKNOWL_DB_URL=.*|export OPENKNOWL_DB_URL='$DB_URL_INPUT'|" "$PROFILE"
-  else
-    echo "" >> "$PROFILE"
-    echo "export OPENKNOWL_DB_URL='$DB_URL_INPUT'" >> "$PROFILE"
-  fi
+settings_path = sys.argv[1]
+db_url = sys.argv[2]
 
-  export OPENKNOWL_DB_URL="$DB_URL_INPUT"
-  echo "✓ DB URL 저장 완료 ($PROFILE)"
+with open(settings_path) as f:
+    settings = json.load(f)
+
+settings.setdefault("env", {})["OPENKNOWL_DB_URL"] = db_url
+
+with open(settings_path, "w") as f:
+    json.dump(settings, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+
+print("  DB URL 저장 완료 (~/.claude/settings.json)")
+PYEOF
 else
-  echo "⚠ DB URL 입력 생략됨 — 나중에 ~/.zshrc에 직접 추가 가능:"
-  echo "  export OPENKNOWL_DB_URL='postgres://...'"
+  echo "⚠ DB URL 입력 생략 — 스킬 첫 사용 시 Claude가 안내합니다."
 fi
 
 echo ""
