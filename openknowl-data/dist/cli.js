@@ -5144,9 +5144,15 @@ var TypeOverrides = import_lib.default.TypeOverrides;
 var defaults = import_lib.default.defaults;
 
 // src/env.ts
-var DB_URL = "postgres://openknowl_readonly:ok_readonly_2025!@dev-openknowl-db.cwvj9lqfkyqc.ap-northeast-2.rds.amazonaws.com/dev_miniintern?ssl=true&sslmode=no-verify";
+var DB_URL = process.env.OPENKNOWL_DB_URL ?? "";
 
 // src/query.ts
+if (!DB_URL) {
+  console.error("\uC624\uB958: OPENKNOWL_DB_URL \uD658\uACBD\uBCC0\uC218\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.");
+  console.error("\uAD00\uB9AC\uC790\uC5D0\uAC8C DB URL\uC744 \uC694\uCCAD \uD6C4 ~/.zshrc\uC5D0 \uCD94\uAC00\uD558\uC138\uC694:");
+  console.error("  export OPENKNOWL_DB_URL='postgres://...'");
+  process.exit(1);
+}
 var sql = process.argv[2];
 if (!sql) {
   console.error('\uC0AC\uC6A9\uBC95: node dist/cli.js "SELECT ..."');

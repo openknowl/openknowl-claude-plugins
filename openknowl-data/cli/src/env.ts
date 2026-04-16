@@ -1,4 +1,3 @@
-// 읽기 전용 DB 계정. 개발팀이 발급한 값으로 교체 후 빌드.
-// CREATE USER openknowl_readonly WITH PASSWORD '...';
-// GRANT SELECT ON ALL TABLES IN SCHEMA public TO openknowl_readonly;
-export const DB_URL = 'postgres://openknowl_readonly:ok_readonly_2025!@dev-openknowl-db.cwvj9lqfkyqc.ap-northeast-2.rds.amazonaws.com/dev_miniintern?ssl=true&sslmode=no-verify';
+// DB URL은 환경변수로 주입. 관리자에게 OPENKNOWL_DB_URL 값을 요청하세요.
+// export OPENKNOWL_DB_URL='postgres://...'
+export const DB_URL = process.env.OPENKNOWL_DB_URL ?? '';

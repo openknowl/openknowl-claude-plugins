@@ -1,6 +1,13 @@
 import { Client } from 'pg';
 import { DB_URL } from './env';
 
+if (!DB_URL) {
+  console.error('오류: OPENKNOWL_DB_URL 환경변수가 설정되지 않았습니다.');
+  console.error('관리자에게 DB URL을 요청 후 ~/.zshrc에 추가하세요:');
+  console.error('  export OPENKNOWL_DB_URL=\'postgres://...\'');
+  process.exit(1);
+}
+
 const sql = process.argv[2];
 
 if (!sql) {

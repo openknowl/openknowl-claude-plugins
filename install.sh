@@ -26,21 +26,7 @@ if ! command -v brew &>/dev/null; then
 fi
 echo "✓ Homebrew 준비 완료"
 
-# ── 2. gh CLI ────────────────────────────────────────────────────
-if ! command -v gh &>/dev/null; then
-  echo "▶ GitHub CLI(gh) 설치 중..."
-  brew install gh
-fi
-echo "✓ GitHub CLI 준비 완료"
-
-# ── 3. GitHub 인증 (공유 토큰) ──────────────────────────────────
-SHARED_PAT="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"
-echo "▶ GitHub 인증 중..."
-echo "$SHARED_PAT" | gh auth login --hostname github.com --git-protocol https --with-token 2>/dev/null || true
-gh auth setup-git 2>/dev/null || true
-echo "✓ GitHub 인증 완료"
-
-# ── 6. Claude Code settings.json 업데이트 ────────────────────────
+# ── 2. Claude Code settings.json 업데이트 ────────────────────────
 echo "▶ Claude Code 설정 업데이트 중..."
 
 # settings.json 이 없으면 빈 객체로 생성
