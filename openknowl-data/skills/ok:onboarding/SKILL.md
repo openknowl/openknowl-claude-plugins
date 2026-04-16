@@ -1,0 +1,67 @@
+---
+description: "오픈놀 Claude 플러그인 최초 설정 — DB URL 입력 및 사용법 안내"
+---
+
+# 오픈놀 플러그인 온보딩
+
+## 실행 순서
+
+### 1. DB 연결 상태 확인
+
+```bash
+python3 -c "
+import json, os
+path = os.path.expanduser('~/.claude/settings.json')
+with open(path) as f: s = json.load(f)
+url = s.get('env', {}).get('OPENKNOWL_DB_URL', '')
+print('SET' if url else 'NOT_SET')
+"
+```
+
+- 결과가 `SET`이면 → 3번으로 건너뜀
+- 결과가 `NOT_SET`이면 → 2번 진행
+
+### 2. DB URL 입력 받기
+
+사용자에게 아래 안내를 출력:
+
+> **관리자에게 받은 DB URL을 여기에 붙여넣어 주세요.**
+
+사용자가 URL을 입력하면 settings.json에 저장:
+
+```bash
+python3 -c "
+import json, os, sys
+path = os.path.expanduser('~/.claude/settings.json')
+with open(path) as f: s = json.load(f)
+s.setdefault('env', {})['OPENKNOWL_DB_URL'] = sys.argv[1]
+with open(path, 'w') as f: json.dump(s, f, indent=2, ensure_ascii=False)
+" -- "USER_PROVIDED_URL"
+```
+
+저장 완료 후 사용자에게 안내:
+
+> ✅ **설정 완료!**
+>
+> **Cowork를 완전히 종료(Cmd+Q)한 뒤 다시 실행해 주세요.**
+> 재시작 후 아래 기능을 바로 사용할 수 있습니다.
+
+### 3. 사용법 안내
+
+재시작 안내 후 (또는 이미 설정된 경우) 아래 내용을 출력:
+
+---
+
+> ## 오픈놀 데이터 조회 사용법
+>
+> 자연어로 질문하면 자동으로 DB를 조회해 답변합니다.
+>
+> **예시 질문:**
+> - "현재 모집중인 미니인턴 몇 개야?"
+> - "이번 달 신규 가입자 수 알려줘"
+> - "M클래스 참여자 수 지난 3개월치 보여줘"
+> - "수료율이 가장 높은 미니인턴 TOP 5는?"
+>
+> 조회 가능한 데이터: 미니인턴, M클래스, 스킬업, 유저, 기업
+>
+> 데이터 조회가 필요할 때마다 `/ok:search-data`를 먼저 언급하거나, 그냥 자연어로 물어보면 됩니다.
