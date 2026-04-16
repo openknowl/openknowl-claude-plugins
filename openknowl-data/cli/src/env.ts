@@ -1,19 +1,6 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+// Vercel 프록시 설정 — 배포 후 실제 값으로 교체 후 npm run build
+export const PROXY_URL = 'https://openknowl-db-proxy.vercel.app/api/query';
+export const PROXY_TOKEN = '50cea6e1bbf15cd40137a442783a55ef';
 
-function getDbUrl(): string {
-  // 1순위: 환경변수 (Claude Code CLI가 settings.json env 필드를 주입)
-  if (process.env.OPENKNOWL_DB_URL) return process.env.OPENKNOWL_DB_URL;
-
-  // 2순위: settings.json 직접 읽기 (Cowork는 env 필드를 자동 주입하지 않음)
-  try {
-    const settingsPath = path.join(os.homedir(), '.claude', 'settings.json');
-    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-    return settings?.env?.OPENKNOWL_DB_URL ?? '';
-  } catch {
-    return '';
-  }
-}
-
-export const DB_URL = getDbUrl();
+// 직접 연결 폴백 (CLI 환경용)
+export const DB_URL = process.env.OPENKNOWL_DB_URL ?? '';

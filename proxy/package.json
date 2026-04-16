@@ -1,0 +1,8 @@
+{
+  "name": "openknowl-db-proxy",
+  "private": true,
+  "dependencies": {
+    "pg": "^8.13.0",
+    "@vercel/node": "^3.0.0"
+  }
+}
