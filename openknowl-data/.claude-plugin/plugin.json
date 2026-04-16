@@ -1,5 +1,5 @@
 {
   "name": "openknowl-data",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "오픈놀 내부 데이터 조회 — 읽기 전용 DB"
 }
