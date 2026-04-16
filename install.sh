@@ -65,10 +65,39 @@ with open(settings_path, "w") as f:
 print("  settings.json 업데이트 완료")
 PYEOF
 
+# ── 3. DB URL 설정 ───────────────────────────────────────────────
+echo ""
+echo "▶ 관리자에게 받은 DB URL을 입력하세요:"
+read -r -s DB_URL_INPUT
+echo ""
+
+if [ -n "$DB_URL_INPUT" ]; then
+  # 쉘 프로파일 결정
+  if [ -f "$HOME/.zshrc" ]; then
+    PROFILE="$HOME/.zshrc"
+  else
+    PROFILE="$HOME/.bash_profile"
+  fi
+
+  # 이미 있으면 교체, 없으면 추가
+  if grep -q "OPENKNOWL_DB_URL" "$PROFILE" 2>/dev/null; then
+    sed -i '' "s|export OPENKNOWL_DB_URL=.*|export OPENKNOWL_DB_URL='$DB_URL_INPUT'|" "$PROFILE"
+  else
+    echo "" >> "$PROFILE"
+    echo "export OPENKNOWL_DB_URL='$DB_URL_INPUT'" >> "$PROFILE"
+  fi
+
+  export OPENKNOWL_DB_URL="$DB_URL_INPUT"
+  echo "✓ DB URL 저장 완료 ($PROFILE)"
+else
+  echo "⚠ DB URL 입력 생략됨 — 나중에 ~/.zshrc에 직접 추가 가능:"
+  echo "  export OPENKNOWL_DB_URL='postgres://...'"
+fi
+
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  설치 완료!"
 echo ""
-echo "  Claude Code를 재시작하면 플러그인이 활성화됩니다."
+echo "  Terminal을 재시작한 뒤 Cowork를 열면 플러그인이 활성화됩니다."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
