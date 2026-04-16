@@ -62,8 +62,7 @@ print('OK' if s.get('env', {}).get('OPENKNOWL_DB_URL') else 'FAIL')
 
 > ✅ **설정 완료!**
 >
-> **Cowork를 완전히 종료(Cmd+Q)한 뒤 다시 실행해 주세요.**
-> 재시작 후 아래 기능을 바로 사용할 수 있습니다.
+> 바로 아래 기능을 사용할 수 있습니다.
 
 결과가 `FAIL`이면:
 
@@ -72,7 +71,7 @@ print('OK' if s.get('env', {}).get('OPENKNOWL_DB_URL') else 'FAIL')
 
 ### 3. 사용법 안내
 
-재시작 안내 후 (또는 이미 설정된 경우) 아래 내용을 출력:
+설정 완료 후 (또는 이미 설정된 경우) 아래 내용을 출력:
 
 ---
 
