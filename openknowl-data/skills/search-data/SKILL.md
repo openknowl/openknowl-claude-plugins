@@ -1,44 +1,14 @@
 ---
-description: "오픈놀 내부 데이터 조회 — 미니인턴 개최/신청/수료, 유저, 기업, M클래스, 스킬업 등. 읽기 전용."
+description: "오픈놀 내부 데이터 조회 — 미니인턴 개최/신청/수료, 유저, 기업, M클래스, 스킬업, 해피폴리오, 결제 등. 읽기 전용."
 ---
 
 # 오픈놀 데이터 조회
 
-읽기 전용 DB에서 데이터를 조회한다.
-
-## DB URL 미설정 시
-
-아래 명령으로 확인:
-
-```bash
-python3 -c "
-import json, os
-path = os.path.expanduser('~/.claude/settings.json')
-with open(path) as f: s = json.load(f)
-print('SET' if s.get('env', {}).get('OPENKNOWL_DB_URL') else 'NOT_SET')
-"
-```
-
-`NOT_SET`이면:
-1. 사용자에게 안내: "관리자에게 받은 DB URL을 여기에 붙여넣어 주세요."
-2. URL을 받아 settings.json에 저장:
-
-```bash
-python3 -c "
-import json, os, sys
-path = os.path.expanduser('~/.claude/settings.json')
-with open(path) as f: s = json.load(f)
-s.setdefault('env', {})['OPENKNOWL_DB_URL'] = sys.argv[1]
-with open(path, 'w') as f: json.dump(s, f, indent=2, ensure_ascii=False)
-print('저장 완료')
-" -- "USER_PROVIDED_URL"
-```
-
-저장 후 바로 쿼리 실행 가능 (재시작 불필요).
+읽기 전용 DB에서 데이터를 조회한다. CLI가 HTTPS 프록시를 통해 DB에 접속한다.
 
 ## 실행 원칙
 
-자연어 요청을 SQL로 변환 후 CLI로 실행. CLI가 settings.json에서 URL을 직접 읽는다.
+자연어 요청을 SQL로 변환 후 CLI로 실행.
 
 ```bash
 node <plugin-dir>/dist/cli.js "SELECT ..."
