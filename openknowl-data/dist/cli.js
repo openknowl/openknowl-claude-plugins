@@ -5143,6 +5143,9 @@ var Result = import_lib.default.Result;
 var TypeOverrides = import_lib.default.TypeOverrides;
 var defaults = import_lib.default.defaults;
 
+// src/query.ts
+var import_child_process = require("child_process");
+
 // src/env.ts
 var PROXY_URL = "https://openknowl-db-proxy.vercel.app/api/query";
 var PROXY_TOKEN = "50cea6e1bbf15cd40137a442783a55ef";
@@ -5164,19 +5167,13 @@ if (!/^\s*SELECT\b/i.test(sql.trim())) {
   process.exit(1);
 }
 async function runViaProxy() {
-  const res = await fetch(PROXY_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${PROXY_TOKEN}`
-    },
-    body: JSON.stringify({ sql })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || `HTTP ${res.status}`);
-  }
-  const data = await res.json();
+  const body = JSON.stringify({ sql });
+  const result = (0, import_child_process.execSync)(
+    `curl -s -X POST "${PROXY_URL}" -H "Content-Type: application/json" -H "Authorization: Bearer ${PROXY_TOKEN}" -d @-`,
+    { input: body, encoding: "utf-8", timeout: 3e4 }
+  );
+  const data = JSON.parse(result);
+  if (data.error) throw new Error(data.error);
   console.log(JSON.stringify(data.rows, null, 2));
 }
 async function runDirect() {

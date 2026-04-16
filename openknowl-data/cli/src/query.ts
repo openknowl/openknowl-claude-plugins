@@ -1,4 +1,5 @@
 import { Client } from 'pg';
+import { execSync } from 'child_process';
 import { DB_URL, PROXY_URL, PROXY_TOKEN } from './env';
 
 if (!DB_URL && !PROXY_URL) {
@@ -21,21 +22,14 @@ if (!/^\s*SELECT\b/i.test(sql.trim())) {
 }
 
 async function runViaProxy() {
-  const res = await fetch(PROXY_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PROXY_TOKEN}`,
-    },
-    body: JSON.stringify({ sql }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error((err as any).error || `HTTP ${res.status}`);
-  }
-
-  const data = await res.json() as { rows: unknown[] };
+  // Node.js fetch는 https_proxy를 무시하므로 curl 사용 (샌드박스 프록시 호환)
+  const body = JSON.stringify({ sql });
+  const result = execSync(
+    `curl -s -X POST "${PROXY_URL}" -H "Content-Type: application/json" -H "Authorization: Bearer ${PROXY_TOKEN}" -d @-`,
+    { input: body, encoding: 'utf-8', timeout: 30000 },
+  );
+  const data = JSON.parse(result);
+  if (data.error) throw new Error(data.error);
   console.log(JSON.stringify(data.rows, null, 2));
 }
 
