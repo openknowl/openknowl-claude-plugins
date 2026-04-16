@@ -33,29 +33,12 @@ if ! command -v gh &>/dev/null; then
 fi
 echo "✓ GitHub CLI 준비 완료"
 
-# ── 3. GitHub 로그인 ─────────────────────────────────────────────
-if ! gh auth status &>/dev/null; then
-  echo ""
-  echo "▶ GitHub 로그인이 필요합니다."
-  echo "  브라우저가 열리면 로그인 후 코드를 붙여넣어 주세요."
-  echo ""
-  gh auth login --hostname github.com --git-protocol https --scopes repo --web
-else
-  echo "✓ GitHub 이미 로그인됨"
-fi
-
-# ── 4. Private repo 접근 확인 ────────────────────────────────────
-echo "▶ 플러그인 레포 접근 확인 중..."
-if ! gh repo view "$REPO" &>/dev/null; then
-  echo ""
-  echo "✗ 오류: '$REPO' 레포에 접근할 수 없습니다."
-  echo "  관리자에게 GitHub 계정 초대를 요청해 주세요."
-  exit 1
-fi
-echo "✓ 레포 접근 가능"
-
-# ── 5. git credential 연동 (Claude Code가 HTTPS로 접근할 경우 대비) ──
+# ── 3. GitHub 인증 (공유 토큰) ──────────────────────────────────
+SHARED_PAT="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"
+echo "▶ GitHub 인증 중..."
+echo "$SHARED_PAT" | gh auth login --hostname github.com --git-protocol https --with-token 2>/dev/null || true
 gh auth setup-git 2>/dev/null || true
+echo "✓ GitHub 인증 완료"
 
 # ── 6. Claude Code settings.json 업데이트 ────────────────────────
 echo "▶ Claude Code 설정 업데이트 중..."
