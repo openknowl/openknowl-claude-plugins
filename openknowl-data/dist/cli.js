@@ -5148,9 +5148,8 @@ var DB_URL = process.env.OPENKNOWL_DB_URL ?? "";
 
 // src/query.ts
 if (!DB_URL) {
-  console.error("\uC624\uB958: OPENKNOWL_DB_URL \uD658\uACBD\uBCC0\uC218\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.");
-  console.error("\uAD00\uB9AC\uC790\uC5D0\uAC8C DB URL\uC744 \uC694\uCCAD \uD6C4 ~/.zshrc\uC5D0 \uCD94\uAC00\uD558\uC138\uC694:");
-  console.error("  export OPENKNOWL_DB_URL='postgres://...'");
+  console.error("\uC624\uB958: OPENKNOWL_DB_URL\uC774 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.");
+  console.error("/ok:onboarding \uC2A4\uD0AC\uC744 \uC2E4\uD589\uD558\uC5EC DB URL\uC744 \uC124\uC815\uD558\uC138\uC694.");
   process.exit(1);
 }
 var sql = process.argv[2];
