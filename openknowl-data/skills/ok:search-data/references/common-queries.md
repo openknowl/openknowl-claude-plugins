@@ -111,7 +111,16 @@ WHERE "createdAt" BETWEEN '2025-01-01' AND '2025-12-31';
 ```sql
 -- 전체
 SELECT COUNT(*) AS 기업수
-FROM "Companies";
+FROM "Companies"
+WHERE "isDeleted" IS NOT TRUE;
+
+-- 기업 상세 정보 포함
+SELECT c.id, c.name, ci."representService", ci.category, ci.homepage
+FROM "Companies" c
+LEFT JOIN "CompanyInfos" ci ON ci."recruitmentCompanyId" = c."recruitmentCompanyId"
+WHERE c."isDeleted" IS NOT TRUE
+ORDER BY c."createdAt" DESC
+LIMIT 20;
 ```
 
 ---
@@ -148,10 +157,18 @@ ORDER BY 신청자수 DESC;
 
 ```sql
 -- 강의별 수강자수
-SELECT c.title AS 강의명, COUNT(cp.id) AS 수강자수
+SELECT c.name AS 강의명, COUNT(cp.id) AS 수강자수
 FROM "Courses" c
 LEFT JOIN "CourseParticipants" cp ON cp."courseId" = c.id
-GROUP BY c.id, c.title
+GROUP BY c.id, c.name
+ORDER BY 수강자수 DESC;
+
+-- 유료 강의만
+SELECT c.name AS 강의명, c.price AS 가격, COUNT(cp.id) AS 수강자수
+FROM "Courses" c
+LEFT JOIN "CourseParticipants" cp ON cp."courseId" = c.id
+WHERE c.price > 0
+GROUP BY c.id, c.name, c.price
 ORDER BY 수강자수 DESC;
 
 -- 수강 로그 (LectureProgresses)
@@ -177,9 +194,105 @@ WHERE "createdAt" BETWEEN '2025-01-01' AND '2025-12-31';
 ## 채용관 공고 (모집중)
 
 ```sql
-SELECT id, title, status, "createdAt"
-FROM "RecruitmentNotices"
-WHERE "deletedAt" IS NULL
-  AND status = 'active'
-ORDER BY "createdAt" DESC;
+SELECT rn.id, rn.name, rn.status, rn."employmentType", rn."createdAt",
+       rc.name AS 기업명
+FROM "RecruitmentNotices" rn
+LEFT JOIN "RecruitmentCompanies" rc ON rc.id = rn."recruitmentCompanyId"
+WHERE rn."deletedAt" IS NULL
+  AND rn.status = 'active'
+ORDER BY rn."createdAt" DESC;
+```
+
+---
+
+## 해피폴리오 인기 TOP
+
+```sql
+-- 판매수 기준 TOP 10
+SELECT id, title, "salesCount", "likeCount", "viewCount", price, status
+FROM "Happyfolios"
+WHERE status = 'approved'
+ORDER BY "salesCount" DESC
+LIMIT 10;
+
+-- 카테고리별 통계
+SELECT hc.id AS 카테고리ID, COUNT(h.id) AS 개수,
+       SUM(h."salesCount") AS 총판매, SUM(h."viewCount") AS 총조회
+FROM "Happyfolios" h
+LEFT JOIN "HappyfolioCategories" hc ON hc.id = h."happyfolioCategoryId"
+WHERE h.status = 'approved'
+GROUP BY hc.id
+ORDER BY 총판매 DESC;
+```
+
+---
+
+## 가입자 소셜 로그인 분포
+
+```sql
+SELECT "loginMethod", COUNT(*) AS 유저수
+FROM "Users"
+GROUP BY "loginMethod"
+ORDER BY 유저수 DESC;
+```
+
+---
+
+## 미니인턴 수료율 TOP
+
+```sql
+SELECT p.name AS 미니인턴명, c.name AS 기업명,
+  COUNT(*) AS 총신청,
+  COUNT(*) FILTER (WHERE pa.result IN ('complete', 'excellent')) AS 수료,
+  ROUND(100.0 * COUNT(*) FILTER (WHERE pa.result IN ('complete', 'excellent')) / NULLIF(COUNT(*), 0), 1) AS 수료율
+FROM "Projects" p
+JOIN "Companies" c ON c.id = p."companyId"
+JOIN "Participations" pa ON pa."projectId" = p.id AND pa."deletedAt" IS NULL
+WHERE p."isDeleted" IS NOT TRUE AND p.status = 'finished'
+GROUP BY p.id, p.name, c.name
+HAVING COUNT(*) >= 5
+ORDER BY 수료율 DESC
+LIMIT 10;
+```
+
+---
+
+## 결제 매출 통계
+
+```sql
+-- 월별 매출
+SELECT DATE_TRUNC('month', "purchasedAt") AS 월,
+       type AS 상품유형,
+       COUNT(*) AS 건수,
+       SUM(price) AS 매출
+FROM "Pays"
+WHERE status = 'paid'
+GROUP BY 1, 2
+ORDER BY 1 DESC, 매출 DESC;
+
+-- 상품 유형별 누적
+SELECT type AS 상품유형, COUNT(*) AS 건수, SUM(price) AS 매출
+FROM "Pays"
+WHERE status = 'paid'
+GROUP BY type
+ORDER BY 매출 DESC;
+```
+
+---
+
+## 채용관 기업 현황
+
+```sql
+SELECT COUNT(*) AS 전체기업수,
+  COUNT(*) FILTER (WHERE "deletedAt" IS NULL) AS 활성기업수
+FROM "RecruitmentCompanies";
+
+-- 기업별 공고수
+SELECT rc.name AS 기업명, COUNT(rn.id) AS 공고수
+FROM "RecruitmentCompanies" rc
+LEFT JOIN "RecruitmentNotices" rn ON rn."recruitmentCompanyId" = rc.id AND rn."deletedAt" IS NULL
+WHERE rc."deletedAt" IS NULL
+GROUP BY rc.id, rc.name
+ORDER BY 공고수 DESC
+LIMIT 20;
 ```
