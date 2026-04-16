@@ -4,6 +4,14 @@ description: "오픈놀 Claude 플러그인 최초 설정 — DB URL 입력 및 
 
 # 오픈놀 플러그인 온보딩
 
+## 시작 전 권한 안내
+
+스킬 실행 시 **설정 파일 읽기/쓰기를 위한 권한 요청**이 팝업으로 표시됩니다.
+사용자에게 먼저 안내할 것:
+
+> ⚠️ **잠깐!** 설정을 저장하기 위해 몇 가지 권한 요청 팝업이 뜹니다.
+> 모두 **허용(Allow)** 해주세요. 거부하면 설정이 저장되지 않습니다.
+
 ## 실행 순서
 
 ### 1. DB 연결 상태 확인
@@ -39,12 +47,28 @@ with open(path, 'w') as f: json.dump(s, f, indent=2, ensure_ascii=False)
 " -- "USER_PROVIDED_URL"
 ```
 
-저장 완료 후 사용자에게 안내:
+저장 후 제대로 기록됐는지 확인:
+
+```bash
+python3 -c "
+import json, os
+path = os.path.expanduser('~/.claude/settings.json')
+with open(path) as f: s = json.load(f)
+print('OK' if s.get('env', {}).get('OPENKNOWL_DB_URL') else 'FAIL')
+"
+```
+
+결과가 `OK`면 사용자에게 안내:
 
 > ✅ **설정 완료!**
 >
 > **Cowork를 완전히 종료(Cmd+Q)한 뒤 다시 실행해 주세요.**
 > 재시작 후 아래 기능을 바로 사용할 수 있습니다.
+
+결과가 `FAIL`이면:
+
+> ❌ 저장에 실패했습니다. 권한 요청을 거부하셨을 수 있습니다.
+> 다시 시도하시거나, 관리자에게 문의해 주세요.
 
 ### 3. 사용법 안내
 
