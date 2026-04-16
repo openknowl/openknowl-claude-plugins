@@ -24,12 +24,23 @@ rows = json.load(sys.stdin)
 "
 ```
 
-## 케이스별 참조
+## 스키마 참조
+
+**먼저** `<skill-dir>/references/schema-index.md` 를 읽고, 시나리오에 맞는 도메인 파일만 추가로 읽는다.
 
 | 요청 유형 | Read 파일 |
 |----------|----------|
-| 테이블·컬럼 모를 때 | `<skill-dir>/references/schema.md` |
-| 자주 쓰는 집계 패턴 | `<skill-dir>/references/common-queries.md` |
+| 진입점 (시나리오→파일 매핑, 관계, 소프트삭제) | `schema-index.md` |
+| 미니인턴 개최/신청/수료/채용제안/챌린지 | `miniintern.md` |
+| M클래스 개최/신청 | `mclass.md` |
+| 스킬업 강의/수강/진도 | `skillup.md` |
+| 해피폴리오 판매/조회/스낵 | `happyfolio.md` |
+| 유저/프로필/이력서 | `user.md` |
+| 기업/채용관/공고 | `company.md` |
+| 결제/매출/환불 | `payment.md` |
+| 자주 쓰는 집계 패턴 | `common-queries.md` |
+
+모든 참조 파일은 `<skill-dir>/references/` 아래에 있다.
 
 ## 출력 규칙
 
