@@ -5213,7 +5213,7 @@ if (!/^\s*SELECT\b/i.test(sql.trim())) {
 async function runViaProxy() {
   const body = JSON.stringify({ sql });
   const result = (0, import_child_process.execSync)(
-    `curl -s -X POST "${PROXY_URL}" -H "Content-Type: application/json" -H "Authorization: Bearer ${PROXY_TOKEN}" -d @-`,
+    `curl -s -X POST "${PROXY_URL}" -H "Content-Type: application/json" -H "X-Api-Token: ${PROXY_TOKEN}" -d @-`,
     { input: body, encoding: "utf-8", timeout: 3e4 }
   );
   const data = JSON.parse(result);

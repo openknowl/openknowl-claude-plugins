@@ -10,7 +10,7 @@ description: "오픈놀 Claude 플러그인 최초 설정 및 사용법 안내"
 
 ```bash
 # 네트워크
-NET=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 https://openknowl-db-proxy.vercel.app/api/query)
+NET=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 https://si84a8l8il.execute-api.ap-northeast-2.amazonaws.com/prod/query)
 
 # 파일
 CREDS=$(find . -maxdepth 4 -name "openknowl-credentials.json" 2>/dev/null | head -1)
@@ -42,7 +42,7 @@ echo "RESULT=$RESULT"
 > 화면 상단 메뉴 → **설정 → 기능 → 추가 허용 도메인** 에 아래 주소 추가:
 >
 > ```
-> openknowl-db-proxy.vercel.app
+> si84a8l8il.execute-api.ap-northeast-2.amazonaws.com
 > ```
 >
 > 추가하고 이 대화를 다시 열면 바로 사용 가능해요.

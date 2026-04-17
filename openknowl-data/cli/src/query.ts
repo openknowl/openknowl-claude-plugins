@@ -25,7 +25,7 @@ async function runViaProxy() {
   // Node.js fetch는 https_proxy를 무시하므로 curl 사용 (샌드박스 프록시 호환)
   const body = JSON.stringify({ sql });
   const result = execSync(
-    `curl -s -X POST "${PROXY_URL}" -H "Content-Type: application/json" -H "Authorization: Bearer ${PROXY_TOKEN}" -d @-`,
+    `curl -s -X POST "${PROXY_URL}" -H "Content-Type: application/json" -H "X-Api-Token: ${PROXY_TOKEN}" -d @-`,
     { input: body, encoding: 'utf-8', timeout: 30000 },
   );
   const data = JSON.parse(result);
