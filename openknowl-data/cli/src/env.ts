@@ -56,4 +56,3 @@ const creds = loadCreds();
 
 export const PROXY_URL = creds.PROXY_URL ?? '';
 export const PROXY_TOKEN = creds.PROXY_TOKEN ?? '';
-export const DB_URL = '';

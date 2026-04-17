@@ -5,12 +5,8 @@
   "scripts": {
     "build": "esbuild src/query.ts --bundle --platform=node --target=node18 --outfile=../dist/cli.js"
   },
-  "dependencies": {
-    "pg": "^8.13.3"
-  },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/pg": "^8.11.10",
     "esbuild": "^0.25.0",
     "typescript": "^5.7.0"
   }

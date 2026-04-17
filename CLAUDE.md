@@ -29,7 +29,9 @@ npm install
 npm run build          # → dist/cli.js 갱신
 ```
 
-`dist/cli.js`는 pg 포함 단일 번들이라 사용처에서 npm install 불필요. **빌드 후 반드시 커밋.**
+`dist/cli.js`는 curl로 AWS API Gateway 프록시에 POST하는 얇은 번들(~2.6kb)이라 사용처에서 npm install 불필요. **빌드 후 반드시 커밋.**
+
+프록시는 AWS API Gateway + Lambda로 별도 관리. 이 레포에는 프록시 소스 없음.
 
 ## 플러그인 구조 규칙
 

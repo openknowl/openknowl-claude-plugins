@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/query.ts": {
-      "maxDuration": 30
-    }
-  }
-}
