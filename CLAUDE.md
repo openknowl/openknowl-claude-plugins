@@ -11,7 +11,7 @@ openknowl-claude-plugins/
 └── openknowl-data/                   # 플러그인 단위
     ├── .claude-plugin/plugin.json    # 플러그인 메타데이터
     ├── cli/                          # TypeScript → 번들 빌드 소스
-    │   ├── src/env.ts                # DB 접속 정보 (크리덴셜 포함 — 커밋 주의)
+    │   ├── src/env.ts                # 런타임에 openknowl-credentials.json 탐색·로드
     │   └── src/query.ts              # CLI 진입점: SELECT만 허용
     ├── dist/cli.js                   # 번들 결과물 (node_modules 불필요)
     └── skills/data-query/            # Claude Code 스킬
@@ -39,11 +39,21 @@ npm run build          # → dist/cli.js 갱신
 - `skills/` 안의 각 스킬은 `SKILL.md` + 선택적 `references/` 구성
 - `skills` 필드는 `plugin.json`에 넣지 않음 — Claude Code가 자동 탐색
 
-## 보안 주의
+## 릴리즈 규칙
 
-- `cli/src/env.ts`에 DB URL(비밀번호 포함)이 하드코딩되어 있음
-- 이 레포는 **반드시 private**으로 유지
-- `dist/cli.js`도 크리덴셜을 포함하므로 외부 공개 금지
+**어떤 변경이든 커밋할 때마다 반드시 버전을 올릴 것.** Cowork/Claude Code가 버전 기반으로 캐시하므로 버전을 안 올리면 사용자에게 변경사항이 반영되지 않음.
+
+버전 올릴 위치 (3곳 전부):
+1. `.claude-plugin/marketplace.json` — `version` 필드 + `plugins[].description`의 vX.Y.Z
+2. `openknowl-data/.claude-plugin/plugin.json` — `version` 필드 + `description`의 vX.Y.Z
+
+코드·스킬·문서 어느 것이든 수정했다면 버전업.
+
+## 크리덴셜 관리
+
+- CLI는 런타임에 `openknowl-credentials.json` 파일을 탐색해서 읽음 (`env.ts` 참조)
+- 소스·번들 어디에도 크리덴셜 하드코딩 없음
+- 배포 흐름: 관리자가 직원에게 `openknowl-credentials.json` 전달 → 직원이 Cowork Project 로컬 폴더에 저장
 
 ## 온보딩 (install.sh)
 
