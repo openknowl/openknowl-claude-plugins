@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "openknowl-plugins",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "오픈놀 내부 Claude Code 플러그인 모음",
   "owner": {
     "name": "OpenKnowl"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "openknowl-data",
-      "description": "오픈놀 내부 데이터 조회 v1.0.8 — 미니인턴/M클래스/스킬업/유저/기업. 읽기 전용 DB.",
+      "description": "오픈놀 내부 데이터 조회 v1.0.9 — 미니인턴/M클래스/스킬업/유저/기업. 읽기 전용 DB.",
       "source": "./openknowl-data",
       "category": "internal"
     }
