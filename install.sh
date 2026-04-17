@@ -35,35 +35,17 @@ if [ ! -f "$SETTINGS" ]; then
   echo "{}" > "$SETTINGS"
 fi
 
-python3 - "$SETTINGS" "$MARKETPLACE_KEY" "$REPO" "$PLUGIN_KEY" <<'PYEOF'
-import sys, json
-
-settings_path = sys.argv[1]
-marketplace_key = sys.argv[2]
-repo = sys.argv[3]
-plugin_key = sys.argv[4]
-
-with open(settings_path) as f:
-    settings = json.load(f)
-
-# extraKnownMarketplaces 추가
-if "extraKnownMarketplaces" not in settings:
-    settings["extraKnownMarketplaces"] = {}
-settings["extraKnownMarketplaces"][marketplace_key] = {
-    "source": {"source": "github", "repo": repo}
-}
-
-# enabledPlugins 추가
-if "enabledPlugins" not in settings:
-    settings["enabledPlugins"] = {}
-settings["enabledPlugins"][plugin_key] = True
-
-with open(settings_path, "w") as f:
-    json.dump(settings, f, indent=2, ensure_ascii=False)
-    f.write("\n")
-
-print("  settings.json 업데이트 완료")
-PYEOF
+node - "$SETTINGS" "$MARKETPLACE_KEY" "$REPO" "$PLUGIN_KEY" <<'JSEOF'
+const [, , settingsPath, marketplaceKey, repo, pluginKey] = process.argv;
+const fs = require('fs');
+const s = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+(s.extraKnownMarketplaces = s.extraKnownMarketplaces || {})[marketplaceKey] = {
+  source: { source: 'github', repo }
+};
+(s.enabledPlugins = s.enabledPlugins || {})[pluginKey] = true;
+fs.writeFileSync(settingsPath, JSON.stringify(s, null, 2) + '\n');
+console.log('  settings.json 업데이트 완료');
+JSEOF
 
 # ── 3. DB URL 설정 ───────────────────────────────────────────────
 echo ""
@@ -72,23 +54,14 @@ read -r -s DB_URL_INPUT
 echo ""
 
 if [ -n "$DB_URL_INPUT" ]; then
-  python3 - "$SETTINGS" "$DB_URL_INPUT" <<'PYEOF'
-import sys, json
-
-settings_path = sys.argv[1]
-db_url = sys.argv[2]
-
-with open(settings_path) as f:
-    settings = json.load(f)
-
-settings.setdefault("env", {})["OPENKNOWL_DB_URL"] = db_url
-
-with open(settings_path, "w") as f:
-    json.dump(settings, f, indent=2, ensure_ascii=False)
-    f.write("\n")
-
-print("  DB URL 저장 완료 (~/.claude/settings.json)")
-PYEOF
+  node - "$SETTINGS" "$DB_URL_INPUT" <<'JSEOF'
+const [, , settingsPath, dbUrl] = process.argv;
+const fs = require('fs');
+const s = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+(s.env = s.env || {}).OPENKNOWL_DB_URL = dbUrl;
+fs.writeFileSync(settingsPath, JSON.stringify(s, null, 2) + '\n');
+console.log('  DB URL 저장 완료 (~/.claude/settings.json)');
+JSEOF
 else
   echo "⚠ DB URL 입력 생략 — 스킬 첫 사용 시 Claude가 안내합니다."
 fi
