@@ -5147,14 +5147,58 @@ var defaults = import_lib.default.defaults;
 var import_child_process = require("child_process");
 
 // src/env.ts
-var PROXY_URL = "https://openknowl-db-proxy.vercel.app/api/query";
-var PROXY_TOKEN = "50cea6e1bbf15cd40137a442783a55ef";
-var DB_URL = process.env.OPENKNOWL_DB_URL ?? "";
+var import_fs = require("fs");
+var import_path = require("path");
+var CREDS_FILE = "openknowl-credentials.json";
+function tryLoad(path) {
+  try {
+    if (!(0, import_fs.existsSync)(path)) return null;
+    return JSON.parse((0, import_fs.readFileSync)(path, "utf8"));
+  } catch {
+    return null;
+  }
+}
+function searchUpward(start) {
+  let dir = start;
+  while (true) {
+    const found = tryLoad((0, import_path.join)(dir, CREDS_FILE));
+    if (found) return found;
+    const parent = (0, import_path.dirname)(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+}
+function searchCoworkMounts() {
+  try {
+    for (const session of (0, import_fs.readdirSync)("/sessions")) {
+      const mntDir = (0, import_path.join)("/sessions", session, "mnt");
+      if (!(0, import_fs.existsSync)(mntDir)) continue;
+      for (const project of (0, import_fs.readdirSync)(mntDir)) {
+        const found = tryLoad((0, import_path.join)(mntDir, project, CREDS_FILE));
+        if (found) return found;
+      }
+    }
+  } catch {
+  }
+  return null;
+}
+function loadCreds() {
+  const projectDir = process.env.CLAUDE_PROJECT_DIR;
+  if (projectDir) {
+    const found = tryLoad((0, import_path.join)(projectDir, CREDS_FILE));
+    if (found) return found;
+  }
+  return searchUpward(process.cwd()) ?? searchCoworkMounts() ?? {};
+}
+var creds = loadCreds();
+var PROXY_URL = creds.PROXY_URL ?? "";
+var PROXY_TOKEN = creds.PROXY_TOKEN ?? "";
+var DB_URL = "";
 
 // src/query.ts
 if (!DB_URL && !PROXY_URL) {
-  console.error("\uC624\uB958: DB \uC5F0\uACB0 \uC815\uBCF4\uAC00 \uC124\uC815\uB418\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.");
-  console.error("/openknowl-data:onboarding \uC2A4\uD0AC\uC744 \uC2E4\uD589\uD558\uC5EC \uC124\uC815\uD558\uC138\uC694.");
+  console.error("\uC624\uB958: openknowl-credentials.json \uD30C\uC77C\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.");
+  console.error("/openknowl-data:onboarding \uC2A4\uD0AC\uC744 \uC2E4\uD589\uD558\uC5EC \uC124\uC815 \uBC29\uBC95\uC744 \uD655\uC778\uD558\uC138\uC694.");
   process.exit(1);
 }
 var sql = process.argv[2];

@@ -3,8 +3,8 @@ import { execSync } from 'child_process';
 import { DB_URL, PROXY_URL, PROXY_TOKEN } from './env';
 
 if (!DB_URL && !PROXY_URL) {
-  console.error('오류: DB 연결 정보가 설정되지 않았습니다.');
-  console.error('/openknowl-data:onboarding 스킬을 실행하여 설정하세요.');
+  console.error('오류: openknowl-credentials.json 파일을 찾을 수 없습니다.');
+  console.error('/openknowl-data:onboarding 스킬을 실행하여 설정 방법을 확인하세요.');
   process.exit(1);
 }
 

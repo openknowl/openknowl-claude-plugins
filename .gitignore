@@ -1,2 +1,5 @@
 **/node_modules/
 .playwright-mcp/
+.DS_Store
+openknowl-credentials.json
+openknowl-data/.creds
