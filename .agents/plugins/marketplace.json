@@ -1,0 +1,20 @@
+{
+  "name": "openknowl-plugins",
+  "interface": {
+    "displayName": "OpenKnowl Plugins"
+  },
+  "plugins": [
+    {
+      "name": "openknowl-data",
+      "source": {
+        "source": "local",
+        "path": "./plugins/openknowl-data"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

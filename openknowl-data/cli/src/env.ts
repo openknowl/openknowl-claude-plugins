@@ -2,6 +2,7 @@ import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 
 const CREDS_FILE = 'openknowl-credentials.json';
+const DEFAULT_PROXY_URL = 'https://si84a8l8il.execute-api.ap-northeast-2.amazonaws.com/prod/query';
 
 interface Creds {
   PROXY_URL?: string;
@@ -54,5 +55,5 @@ function loadCreds(): Creds {
 
 const creds = loadCreds();
 
-export const PROXY_URL = creds.PROXY_URL ?? '';
+export const PROXY_URL = creds.PROXY_URL ?? DEFAULT_PROXY_URL;
 export const PROXY_TOKEN = creds.PROXY_TOKEN ?? '';
